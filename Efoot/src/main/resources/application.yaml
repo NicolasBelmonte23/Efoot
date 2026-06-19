@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: Efoot
+
+  datasource:
+    url: ${URL_DATABASE}
+    username: ${USERNAME_DATABASE}
+    password: ${PASSWORD_DATABASE}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enable: true
+
