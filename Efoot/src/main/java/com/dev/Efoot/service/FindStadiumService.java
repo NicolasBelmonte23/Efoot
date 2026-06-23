@@ -1,6 +1,8 @@
 package com.dev.Efoot.service;
 
 import com.dev.Efoot.controller.response.StadiumResponse;
+import com.dev.Efoot.entity.Stadium;
+import com.dev.Efoot.exception.ResourceNotFoundException;
 import com.dev.Efoot.mapper.StadiumMapper;
 import com.dev.Efoot.repository.StadiumRepository;
 
@@ -19,5 +21,10 @@ public class FindStadiumService {
     public Page<StadiumResponse> listAllStadium(Pageable pageable){
         return stadiumRepository.findAll(pageable)
                 .map(stadiumMapper::toStadiumResponse);
+    }
+
+    public Stadium findById(Long id){
+        return stadiumRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Stadium not found for id: " + id));
     }
 }
