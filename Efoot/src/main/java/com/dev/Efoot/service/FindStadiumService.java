@@ -14,9 +14,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FindStadiumService {
     private final StadiumRepository stadiumRepository;
+    private final StadiumMapper stadiumMapper;
 
     public Page<StadiumResponse> listAllStadium(Pageable pageable){
         return stadiumRepository.findAll(pageable)
-                .map(stadium -> StadiumMapper.toStadiumResponse(stadium));
+                .map(stadiumMapper::toStadiumResponse);
     }
 }
