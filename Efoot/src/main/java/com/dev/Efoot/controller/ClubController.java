@@ -7,6 +7,7 @@ import com.dev.Efoot.entity.Club;
 import com.dev.Efoot.mapper.ClubMapper;
 import com.dev.Efoot.service.CreateClubService;
 import com.dev.Efoot.service.FindClubService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +38,7 @@ public class ClubController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ClubDetailResponse create(@RequestBody CreateClubRequest request){
+    public ClubDetailResponse create(@Valid @RequestBody CreateClubRequest request){
         return createClubService.execute(request);
     }
 
