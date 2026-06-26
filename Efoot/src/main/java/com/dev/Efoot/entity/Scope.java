@@ -5,15 +5,16 @@ import lombok.*;
 
 @Getter
 @Setter
-@Entity
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
+@AllArgsConstructor
+@Entity
+@Table(name = "scopes")
 public class Scope {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE , generator = "scope_seq")
-    @SequenceGenerator(name= "scope_seq", sequenceName = "scope_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "scopes_seq")
+    @SequenceGenerator(name = "scopes_seq", sequenceName = "scopes_seq", allocationSize = 1)
     private Long id;
     private String name;
 
