@@ -19,3 +19,9 @@ spring:
   flyway:
     enable: true
 
+jwt:
+  public:
+    key: classpath:authz.pub
+  private:
+    key: classpath:authz.pem
+
