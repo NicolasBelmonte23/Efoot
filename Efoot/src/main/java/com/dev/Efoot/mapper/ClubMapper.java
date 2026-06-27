@@ -11,7 +11,7 @@ import org.mapstruct.Mapping;
 public interface ClubMapper {
     ClubResponse toClubResponse(Club club);
 
-    ClubDetailResponse toClub(Club club);
+    ClubDetailResponse toClubDetailResponse(Club club);
 
     @Mapping(target = "stadium.id" , source = "stadiumId")
     Club toEntity(CreateClubRequest request);

@@ -41,7 +41,7 @@ public class ClubController {
     @ResponseStatus(HttpStatus.OK)
     public ClubDetailResponse findById(@PathVariable Long id){
         Club byId = findClubService.findById(id);
-        return mapper.toClub(byId);
+        return mapper.toClubDetailResponse(byId);
     }
 
     @PreAuthorize("hasAnyAuthority('SCOPE_club:write', 'SCOPE_admin:all')")

@@ -49,10 +49,7 @@ public class FindUserService {
 
         String token = jwtEncoder.encode(JwtEncoderParameters.from(jwt)).getTokenValue();
 
-        return LoginResponse.builder()
-                .accessToken(token)
-                .expiresIn(expiresIn)
-                .build();
+        return new LoginResponse(token, expiresIn);
     }
 
     private boolean isPasswordCorrect(String password, String savedPassowrd) {

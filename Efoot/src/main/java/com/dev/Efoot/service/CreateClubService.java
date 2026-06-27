@@ -23,6 +23,6 @@ public class CreateClubService {
            entity.setStadium(findStadiumService.findById(entity.getStadium().getId()));
        }
        Club newClub = clubRepository.save(entity);
-       return mapper.toClub(newClub);
+       return mapper.toClubDetailResponse(newClub);
    }
 }
