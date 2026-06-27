@@ -1,5 +1,7 @@
 package com.dev.Efoot.controller;
 
+import com.dev.Efoot.config.security.annotation.CanReadPlayer;
+import com.dev.Efoot.config.security.annotation.CanWritePlayer;
 import com.dev.Efoot.controller.request.CreatePlayerRequest;
 import com.dev.Efoot.controller.response.PlayerDetailResponse;
 import com.dev.Efoot.controller.response.PlayerResponse;
@@ -21,18 +23,21 @@ public class PlayerController {
     private final FindPlayerService findPlayerService;
     private final CreatePlayerService createPlayerService;
 
+    @CanReadPlayer
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<PlayerResponse> findPlayer(Pageable pageable){
         return findPlayerService.findAll(pageable);
     }
 
+    @CanReadPlayer
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlayerDetailResponse findPlayerById(@PathVariable Long id){
         return findPlayerService.findById(id);
     }
 
+    @CanWritePlayer
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PlayerResponse create(@Valid @RequestBody CreatePlayerRequest request){

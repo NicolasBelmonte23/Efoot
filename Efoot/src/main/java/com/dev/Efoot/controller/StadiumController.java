@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -24,12 +25,14 @@ public class StadiumController {
     }
 
 
+    @PreAuthorize("hasAnyAuthority('SCOPE_club:read', 'SCOPE_admin:all')")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<StadiumResponse> listAllStadiums(Pageable pageable){
         return findStadiumService.listAllStadium(pageable);
     }
 
+    @PreAuthorize("hasAnyAuthority('SCOPE_club:write', 'SCOPE_admin:all')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public StadiumResponse create(@Valid @RequestBody CreateStadiumRequest request){

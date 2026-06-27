@@ -1,4 +1,4 @@
-package com.dev.Efoot.config;
+package com.dev.Efoot.config.security;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
