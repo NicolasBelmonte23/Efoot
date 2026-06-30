@@ -1,48 +1,88 @@
 package com.dev.Efoot.mapper;
-
 import com.dev.Efoot.controller.request.CreateUserRequest;
 import com.dev.Efoot.controller.response.UserResponse;
+import com.dev.Efoot.entity.Scope;
 import com.dev.Efoot.entity.User;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-public class UserMapperTest extends TestCase {
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class UserMapperTest {
+
     private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
 
-    public void testToEntity() {
-        CreateUserRequest build = CreateUserRequest.builder()
-                .name("John Doe")
-                .email("john.doe@example.com")
+    @Test
+    @DisplayName("Should map CreateUserRequest to User entity")
+    void toEntity() {
+        // Given
+        CreateUserRequest request = CreateUserRequest.builder()
+                .name("new user")
+                .email("newuser@java10x.com")
                 .password("password")
-                .scopes(List.of(1L, 2L))
+                .scopes(List.of(34L, 12L))
                 .build();
-        User entity = mapper.toEntity(build);
-        assertNotNull(entity);
-        assertEquals(build.getName(), entity.getName());
-        assertEquals(build.getEmail(), entity.getEmail());
-        assertEquals(build.getPassword(), entity.getPassword());
-        assertEquals(build.getScopes().size(), entity.getScopes().size());
+
+        // When
+        User user = mapper.toEntity(request);
+
+        // Then
+        assertNotNull(user);
+        assertEquals(request.getName(), user.getName());
+        assertEquals(request.getEmail(), user.getEmail());
+        assertEquals(request.getPassword(), user.getPassword());
+        assertNotNull(user.getScopes());
+        assertEquals(request.getScopes().size(), user.getScopes().size());
+        assertEquals(request.getScopes().get(0), user.getScopes().get(0).getId());
+        assertEquals(request.getScopes().get(1), user.getScopes().get(1).getId());
     }
 
-    public void testToResponse() {
-        User stadium = User.builder()
-                .id(1L)
-                .name("Stadium A")
-                .email("stadium-a@example.com")
-                .build();
-        UserResponse response = mapper.toResponse(stadium);
+    @Test
+    @DisplayName("Should return null when CreateUserRequest is null")
+    void toEntityNull() {
+        // Given + When
+        User user = mapper.toEntity(null);
+
+        // Then
+        assertNull(user);
+    }
+
+    @Test
+    @DisplayName("Should map User entity to UserResponse")
+    void toResponse() {
+        // Given
+        User user = new User();
+        user.setName("new user");
+        user.setEmail("newuser@java10x.com");
+        user.setPassword("password");
+        user.setScopes(List.of(Scope.builder().id(34L).name("scope1").build(),
+                Scope.builder().id(12L).name("scope2").build()));
+
+        // When
+        UserResponse response = mapper.toResponse(user);
+
+        // Then
         assertNotNull(response);
-        assertEquals(stadium.getId(), response.getId());
-        assertEquals(stadium.getName(), response.getName());
-        assertEquals(stadium.getEmail(), response.getEmail());
+        assertEquals(user.getName(), response.getName());
+        assertEquals(user.getEmail(), response.getEmail());
+        assertNotNull(response.getScopes());
+        assertEquals(user.getScopes().size(), response.getScopes().size());
+        assertEquals(user.getScopes().get(0).getName(), response.getScopes().get(0));
+        assertEquals(user.getScopes().get(1).getName(), response.getScopes().get(1));
     }
 
-    public void testMapScopeIdsToScopeEntities() {
+    @Test
+    @DisplayName("Should return null when User entity is null")
+    void toResponseNull() {
+        // Given + When
+        UserResponse response = mapper.toResponse(null);
 
-    }
-
-    public void testMapScopeEntitiesToStringScopes() {
+        // Then
+        assertNull(response);
     }
 }

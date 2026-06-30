@@ -1,77 +1,145 @@
 package com.dev.Efoot.mapper;
 
+import com.dev.Efoot.controller.request.CreatePlayerRequest;
+import com.dev.Efoot.controller.response.PlayerDetailResponse;
 import com.dev.Efoot.controller.response.PlayerResponse;
 import com.dev.Efoot.entity.Club;
 import com.dev.Efoot.entity.Player;
-import junit.framework.TestCase;
+import com.dev.Efoot.entity.Position;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-public class PlayerMapperTest extends TestCase{
-    private PlayerMapper mapper;
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Override
-    protected void setUp() {
-        mapper = Mappers.getMapper(PlayerMapper.class);
-    }
+class PlayerMapperTest {
 
-    public void testToPlayerResponse(       ) {
-        Player build = Player.builder()
-                .id(1L)
-                .name("Player A")
-                .position(com.dev.Efoot.entity.Position.FORWARD)
+    private final PlayerMapper mapper = Mappers.getMapper(PlayerMapper.class);
+
+    @Test
+    @DisplayName("Should convert CreatePlayerRequest to Player")
+    void toEntity() {
+        // Given
+        CreatePlayerRequest request = CreatePlayerRequest.builder()
+                .name("Lionel Messi")
+                .position(Position.FORWARD)
                 .shirtNumber(10)
-                .urlImg("https://example.com/player-a.jpg")
-                .build();
-        PlayerResponse playerResponse = mapper.toPlayerResponse(build);
-        assertNotNull(playerResponse);
-        assertEquals(build.getId(), playerResponse.getId());
-        assertEquals(build.getName(), playerResponse.getName());
-        assertEquals(build.getPosition().getLabel(), playerResponse.getPosition());
-        assertEquals(build.getShirtNumber(), playerResponse.getShirtNumber());
-        assertEquals(build.getUrlImg(), playerResponse.getUrlImg());
-    }
-
-    public void testToPlayerDetailResponse() {
-        Club club = com.dev.Efoot.entity.Club.builder()
-                .id(1L)
-                .name("Test Club")
-                .urlImg("https://example.com/club.jpg")
+                .clubId(1L)
+                .urlImg("https://www.superstarsoccer.com.br/players/messi.jpg")
                 .build();
 
-        Player build = Player.builder()
-                .id(1L)
-                .name("Player A")
-                .position(com.dev.Efoot.entity.Position.FORWARD)
-                .shirtNumber(10)
-                .urlImg("https://example.com/player-a.jpg")
-                .club(club)
-                .build();
-
-        var playerDetailResponse = mapper.toPlayerDetailResponse(build);
-        assertNotNull(playerDetailResponse);
-        assertEquals(build.getId(), playerDetailResponse.getId());
-        assertEquals(build.getName(), playerDetailResponse.getName());
-        assertEquals(build.getPosition().getLabel(), playerDetailResponse.getPosition());
-        assertEquals(build.getShirtNumber(), playerDetailResponse.getShirtNumber());
-        assertEquals(build.getUrlImg(), playerDetailResponse.getUrlImg());
-    }
-
-    public void testToEntity() {
-        com.dev.Efoot.controller.request.CreatePlayerRequest request = 
-                new com.dev.Efoot.controller.request.CreatePlayerRequest(
-                        "Player B",
-                        "MIDFIELDER",
-                        5,
-                        "https://example.com/player-b.jpg",
-                        2L
-                );
-
+        // When
         Player player = mapper.toEntity(request);
+
+        // Then
         assertNotNull(player);
         assertEquals(request.getName(), player.getName());
-        assertEquals(request.getShirtNumber(), player.getShirtNumber());
-        assertEquals(request.getUrlImg(), player.getUrlImg());
-        assertNotNull(player.getClub());
+        assertEquals(request.getPosition(), player.getPosition());
         assertEquals(request.getClubId(), player.getClub().getId());
+        assertEquals(request.getUrlImg(), player.getUrlImg());
+        assertEquals(request.getShirtNumber(), player.getShirtNumber());
+    }
+
+    @Test
+    @DisplayName("Should return null when CreatePlayerRequest is null")
+    void toEntityNull() {
+        // Given + When
+        Player player = mapper.toEntity(null);
+
+        // Then
+        assertNull(player);
+    }
+
+    @Test
+    @DisplayName("Should convert Player to PlayerResponse")
+    void toResponse() {
+        // Given
+        Player player = new Player();
+        player.setId(1L);
+        player.setName("Lionel Messi");
+        player.setPosition(Position.FORWARD);
+        player.setShirtNumber(10);
+        player.setUrlImg("https://www.superstarsoccer.com.br/players/messi.jpg");
+
+        // When
+        PlayerResponse response = mapper.toPlayerResponse(player);
+
+        // Then
+        assertNotNull(response);
+        assertEquals(player.getId(), response.getId());
+        assertEquals(player.getName(), response.getName());
+        assertEquals(player.getPosition().getLabel(), response.getPosition());
+        assertEquals(player.getShirtNumber(), response.getShirtNumber());
+        assertEquals(player.getUrlImg(), response.getUrlImg());
+    }
+
+    @Test
+    @DisplayName("Should return null when Player is null")
+    void toResponseNull() {
+        // Given + When
+        PlayerResponse response = mapper.toPlayerResponse(null);
+
+        // Then
+        assertNull(response);
+    }
+
+    @Test
+    @DisplayName("Should convert Player to PlayerDetailResponse")
+    void toDetailResponse() {
+        // Given
+        Player player = new Player();
+        player.setId(1L);
+        player.setName("Lionel Messi");
+        player.setPosition(Position.FORWARD);
+        player.setShirtNumber(10);
+        player.setUrlImg("https://www.superstarsoccer.com.br/players/messi.jpg");
+        player.setClub(Club.builder().id(2L).name("Seleção Argentina").build());
+
+        // When
+        PlayerDetailResponse response = mapper.toPlayerDetailResponse(player);
+
+        // Then
+        assertNotNull(response);
+        assertEquals(player.getId(), response.getId());
+        assertEquals(player.getName(), response.getName());
+        assertEquals(player.getPosition().getLabel(), response.getPosition());
+        assertEquals(player.getShirtNumber(), response.getShirtNumber());
+        assertEquals(player.getUrlImg(), response.getUrlImg());
+        assertEquals(player.getClub().getId(), response.getClub().getId());
+        assertEquals(player.getClub().getName(), response.getClub().getName());
+    }
+
+    @Test
+    @DisplayName("Should convert Player to PlayerDetailResponse without club information")
+    void toDetailResponseWithoutClub() {
+        // Given
+        Player player = new Player();
+        player.setId(1L);
+        player.setName("Lionel Messi");
+        player.setPosition(Position.FORWARD);
+        player.setShirtNumber(10);
+        player.setUrlImg("https://www.superstarsoccer.com.br/players/messi.jpg");
+
+        // When
+        PlayerDetailResponse response = mapper.toPlayerDetailResponse(player);
+
+        // Then
+        assertNotNull(response);
+        assertEquals(player.getId(), response.getId());
+        assertEquals(player.getName(), response.getName());
+        assertEquals(player.getPosition().getLabel(), response.getPosition());
+        assertEquals(player.getShirtNumber(), response.getShirtNumber());
+        assertEquals(player.getUrlImg(), response.getUrlImg());
+        assertNull(response.getClub());
+    }
+
+    @Test
+    @DisplayName("Should return null when Player is null for detail response")
+    void toDetailResponseNull() {
+        // Given + When
+        PlayerDetailResponse response = mapper.toPlayerDetailResponse(null);
+
+        // Then
+        assertNull(response);
     }
 }

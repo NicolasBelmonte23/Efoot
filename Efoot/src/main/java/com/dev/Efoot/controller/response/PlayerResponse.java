@@ -1,11 +1,13 @@
 package com.dev.Efoot.controller.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class PlayerResponse {
 
     private Long id;

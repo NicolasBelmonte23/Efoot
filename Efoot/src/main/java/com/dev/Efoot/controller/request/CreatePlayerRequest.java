@@ -1,22 +1,18 @@
 package com.dev.Efoot.controller.request;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.dev.Efoot.entity.Position;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+@Builder
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class CreatePlayerRequest {
     @NotBlank
     private String name;
     @NotNull
-    private String position;
+    private Position position;
     @NotNull
     private int shirtNumber;
     private String urlImg;

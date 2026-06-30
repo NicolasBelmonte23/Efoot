@@ -1,76 +1,148 @@
 package com.dev.Efoot.mapper;
 
-import junit.framework.TestCase;
+import com.dev.Efoot.controller.response.ClubDetailResponse;
 import com.dev.Efoot.entity.Club;
 import com.dev.Efoot.entity.Stadium;
 import com.dev.Efoot.controller.response.ClubResponse;
 import com.dev.Efoot.controller.request.CreateClubRequest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+
 import java.time.LocalDate;
 
-public class ClubMapperTest extends TestCase {
-    private ClubMapper mapper;
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Override
-    protected void setUp() {
-        mapper = Mappers.getMapper(ClubMapper.class);
+class ClubMapperTest {
+
+    private final ClubMapper mapper = Mappers.getMapper(ClubMapper.class);
+
+    @Test
+    @DisplayName("Should map Club entity to ClubResponse")
+    void toResponse() {
+        // Given
+        Club club = new Club();
+        club.setId(1L);
+        club.setName("São Paulo FC");
+        club.setFounded(LocalDate.of(1935, 1, 1));
+        club.setUrlImg("https://www.superstarsoccer.com.br/clubs/spfc.jpg");
+
+        // When
+        ClubResponse response = mapper.toClubResponse(club);
+
+        // Then
+        assertNotNull(response);
+        assertEquals(club.getId(), response.getId());
+        assertEquals(club.getName(), response.getName());
+        assertEquals(club.getFounded(), response.getFounded());
+        assertEquals(club.getUrlImg(), response.getUrlImg());
     }
 
-    public void testToClubResponse() {
-        Club club = Club.builder()
-                .id(1L)
-                .name("Test Club")
-                .founded(LocalDate.of(2000, 5, 15))
-                .urlImg("https://example.com/club.jpg")
-                .build();
+    @Test
+    @DisplayName("Should return null when Club entity is null")
+    void toResponseNull() {
+        // Given + When
+        ClubResponse response = mapper.toClubResponse(null);
 
-        ClubResponse clubResponse = mapper.toClubResponse(club);
-        assertNotNull(clubResponse);
-        assertEquals(club.getId(), clubResponse.getId());
-        assertEquals(club.getName(), clubResponse.getName());
-        assertEquals(club.getFounded(), clubResponse.getFounded());
-        assertEquals(club.getUrlImg(), clubResponse.getUrlImg());
+        // Then
+        assertNull(response);
     }
 
-    public void testToClubDetailResponse() {
-        Stadium stadium = Stadium.builder()
-                .id(1L)
-                .name("Stadium Test")
-                .city("Test City")
-                .capacity(50000)
-                .urlImg("https://example.com/stadium.jpg")
-                .build();
+    @Test
+    @DisplayName("Should map Club entity to ClubDetailResponse")
+    void toDetailResponse() {
+        // Given
+        Club club = new Club();
+        club.setId(1L);
+        club.setName("São Paulo FC");
+        club.setFounded(LocalDate.of(1935, 1, 1));
+        club.setUrlImg("https://www.superstarsoccer.com.br/clubs/spfc.jpg");
+        club.setStadium(Stadium.builder()
+                .id(5L)
+                .name("Estádio do Morumbi")
+                .city("Morumbi")
+                .capacity(35000)
+                .urlImg("http://www.superstarsoccer.com.br/clubs/spfc.jpg")
+                .build());
 
-        Club club = Club.builder()
-                .id(1L)
-                .name("Test Club")
-                .founded(LocalDate.of(2000, 5, 15))
-                .urlImg("https://example.com/club.jpg")
-                .stadium(stadium)
-                .build();
+        // When
+        ClubDetailResponse response = mapper.toClubDetailResponse(club);
 
-        var clubDetailResponse = mapper.toClubDetailResponse(club);
-        assertNotNull(clubDetailResponse);
-        assertEquals(club.getId(), clubDetailResponse.getId());
-        assertEquals(club.getName(), clubDetailResponse.getName());
-        assertEquals(club.getFounded(), clubDetailResponse.getFounded());
-        assertEquals(club.getUrlImg(), clubDetailResponse.getUrlImg());
+        // Then
+        assertNotNull(response);
+        assertEquals(club.getId(), response.getId());
+        assertEquals(club.getName(), response.getName());
+        assertEquals(club.getFounded(), response.getFounded());
+        assertEquals(club.getUrlImg(), response.getUrlImg());
+        assertEquals(club.getStadium().getId(), response.getStadium().getId());
+        assertEquals(club.getStadium().getName(), response.getStadium().getName());
+        assertEquals(club.getStadium().getCity(), response.getStadium().getCity());
+        assertEquals(club.getStadium().getCapacity(), response.getStadium().getCapacity());
+        assertEquals(club.getStadium().getUrlImg(), response.getStadium().getUrlImg());
     }
 
-    public void testToEntity() {
-        CreateClubRequest request = new CreateClubRequest(
-                "New Club",
-                LocalDate.of(2010, 3, 20),
-                "https://example.com/newclub.jpg",
-                2L
-        );
+    @Test
+    @DisplayName("Should map Club entity to ClubDetailResponse Without Stadium")
+    void toDetailResponseWithoutStadium() {
+        // Given
+        Club club = new Club();
+        club.setId(1L);
+        club.setName("São Paulo FC");
+        club.setFounded(LocalDate.of(1935, 1, 1));
+        club.setUrlImg("https://www.superstarsoccer.com.br/clubs/spfc.jpg");
 
+        // When
+        ClubDetailResponse response = mapper.toClubDetailResponse(club);
+
+        // Then
+        assertNotNull(response);
+        assertEquals(club.getId(), response.getId());
+        assertEquals(club.getName(), response.getName());
+        assertEquals(club.getFounded(), response.getFounded());
+        assertEquals(club.getUrlImg(), response.getUrlImg());
+        assertNull(response.getStadium());
+    }
+
+    @Test
+    @DisplayName("Should return null when Club entity is null for ClubDetailResponse")
+    void toDetailResponseNull() {
+        // Given + When
+        ClubDetailResponse response = mapper.toClubDetailResponse(null);
+
+        // Then
+        assertNull(response);
+    }
+
+    @Test
+    @DisplayName("Should map CreateClubRequest to Club entity")
+    void toEntity() {
+        // Given
+        CreateClubRequest request = new CreateClubRequest();
+        request.setName("São Paulo FC");
+        request.setFounded(LocalDate.of(1935, 1, 1));
+        request.setStadiumId(1L);
+        request.setUrlImg("https://www.superstarsoccer.com.br/clubs/spfc.jpg");
+
+        // When
         Club club = mapper.toEntity(request);
+
+        // Then
         assertNotNull(club);
         assertEquals(request.getName(), club.getName());
         assertEquals(request.getFounded(), club.getFounded());
+        assertEquals(request.getStadiumId(), club.getStadium().getId());
         assertEquals(request.getUrlImg(), club.getUrlImg());
         assertNotNull(club.getStadium());
         assertEquals(request.getStadiumId(), club.getStadium().getId());
+    }
+
+    @Test
+    @DisplayName("Should return null when CreateClubRequest is null")
+    void toEntityNul() {
+        // Given + When
+        Club club = mapper.toEntity(null);
+
+        // Then
+        assertNull(club);
     }
 }
